@@ -1,0 +1,14 @@
+# Dependencias
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Archivos de build y salidas
+dist/
+client/dist/
+server/dist/
+
+# Logs y archivos del sistema
+*.log
+.DS_Store
+.env
