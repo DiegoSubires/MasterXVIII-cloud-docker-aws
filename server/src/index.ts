@@ -54,6 +54,31 @@ app.get("/api/list", (req: Request, res: Response<ResourceItem[]>) => {
 - Nota de Sintaxis: En Express 5+, se usa "{*path}" o "(.*)" para capturar todo.
 */
 
+// ==========================================
+// RUTAS DE LA API (FRASES Y PERSONAJES)
+// ==========================================
+
+// Simulación de base de datos en memoria o consulta
+let bestSentences: Record<string, string> = {
+  "2": "Aw geez, Rick!", // Frase para Morty (ID 2)
+};
+
+// Endpoint para obtener la frase célebre
+app.get("/api/character/:id/sentence", (req: Request, res: Response) => {
+  const id = String(req.params.id);
+  const sentence = bestSentences[id] || "";
+  res.json({ sentence });
+});
+
+// Endpoint para guardar/actualizar la frase célebre
+app.post("/api/character/:id/sentence", (req: Request, res: Response) => {
+  const id = String(req.params.id);
+  const { sentence } = req.body;
+  bestSentences[id] = sentence;
+  res.json({ success: true, sentence });
+});
+
+// Fallback para React Router[cite: 4]
 app.get("{*path}", (req: Request, res: Response) => {
   res.sendFile(path.resolve(staticFilesPath, "index.html"));
 });
