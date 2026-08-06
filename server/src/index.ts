@@ -53,6 +53,7 @@ app.get("/api/list", (req: Request, res: Response<ResourceItem[]>) => {
   devuelve el index.html de React para que React Router capture la ruta.
 - Nota de Sintaxis: En Express 5+, se usa "{*path}" o "(.*)" para capturar todo.
 */
+
 app.get("{*path}", (req: Request, res: Response) => {
   res.sendFile(path.resolve(staticFilesPath, "index.html"));
 });
