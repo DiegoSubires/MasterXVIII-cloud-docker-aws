@@ -5,6 +5,9 @@ import { fileURLToPath } from "node:url";
 
 const app = express();
 
+// Middleware necesario al envíar datos en formato JSON desde el cliente (ej. al guardar la frase)
+app.use(express.json());
+
 /* 
 ===================================================================
 1. RESOLUCIÓN DE RUTAS PARA ARCHIVOS ESTÁTICOS (FRONTEND)
