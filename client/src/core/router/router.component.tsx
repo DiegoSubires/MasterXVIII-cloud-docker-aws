@@ -11,7 +11,7 @@ import { CharacterDetailScene } from "@/scenes/character-detail.scene";
 
 export const AppRouter: React.FC = () => {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <main style={{ minHeight: "calc(100vh - 70px)" }}>
         <Routes>
           <Route path="/characters" element={<CharacterListScene />} />
