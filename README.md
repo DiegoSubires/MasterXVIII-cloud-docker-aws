@@ -58,3 +58,38 @@ Para conservar la visibilidad de cómo operaba la aplicación en entornos locale
   2. Endpoints API REST de consulta y guardado bajo el prefijo `/api`.
   3. Fallback SPA posicionado al cierre para redirigir tráfico no controlado al `index.html`.
   4. Escucha del servidor respetando el puerto dinámico (`process.env.PORT`) provisto por Render.
+
+# 🤖 Rick & Morty - Proyecto de Despliegue Automatizado (GitHub Actions y Arquitectura Distribuida en Render)
+
+Este repositorio contiene la evolución de la práctica hacia una **arquitectura distribuida con automatización CI/CD**.
+
+El frontend de la aplicación se ha migrado para ser servido de forma estática en **GitHub Pages**, mientras que el backend (API REST) sigue operando de manera independiente en **Render**.
+
+---
+
+## 🎯 Hitos de la Práctica
+
+1. **Separación de Servicios (Arquitectura Distribuida)**:
+   - **Frontend**: Desacoplado del servidor Express y configurado como una SPA (Single Page Application) estática en GitHub Pages.
+   - **Backend**: Alojado en Render, actuando puramente como una API REST para la gestión de los recursos (frases célebres).
+
+2. **Automatización CI/CD con GitHub Actions**:
+   - Creación de un flujo de trabajo automatizado (`deploy.yml`) que se dispara tras cualquier evento de `push` o `merge` a la rama `main`.
+   - La 'pipeline' se encarga de configurar el entorno de Node.js, instalar las dependencias del cliente, compilar los assets estáticos (`vite build`) y publicar el resultado en la rama de despliegue de GitHub Pages de forma transparente.
+
+3. **Configuración de CORS (Cross-Origin Resource Sharing)**:
+   - Integración del middleware `cors` en el servidor Express del backend para permitir explícitamente las peticiones cruzadas provenientes del dominio de producción de GitHub Pages (`*.github.io`).
+
+---
+
+## ⚙️ Ajustes Técnicos Realizados
+
+### 1. Consumo de API con Ruta Absoluta
+
+- **Desafío**: El frontend ya no puede realizar peticiones relativas (`/api/...`) al no estar alojado en el mismo servidor.
+- **Solución**: Se ha modificado la capa de datos del cliente (`character-detail.api.ts`) para apuntar dinámicamente a la URL absoluta del Web Service en Render.
+
+### 2. Configuración del Directorio de Trabajo en el Workflow
+
+- **Desafío**: Al tener el proyecto una estructura dividida en subcarpetas, el runner de GitHub Actions no encontraba los archivos en la raíz.
+- **Solución**: Se ha configurado el workflow utilizando las directivas `working-directory: ./client` y `cache-dependency-path` para guiar al proceso de instalación y compilación dentro de la subcarpeta del frontend.
