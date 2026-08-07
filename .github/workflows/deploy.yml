@@ -27,12 +27,18 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
+          # Le indicamos dónde está el package-lock.json del cliente para la caché
+          cache-dependency-path: "./client/package-lock.json"
 
       - name: Install dependencies
+        # Entramos a la carpeta client para instalar
         run: npm ci
+        working-directory: ./client
 
       - name: Build project
+        # Entramos a la carpeta client para compilar
         run: npm run build
+        working-directory: ./client
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
