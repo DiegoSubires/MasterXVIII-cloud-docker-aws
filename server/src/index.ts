@@ -91,7 +91,7 @@ app.post("/api/character/:id/sentence", (req: Request, res: Response) => {
   res.json({ success: true, sentence });
 });
 
-// Fallback SPA, para React Router, al final de las rutas
+// Fallback SPA, para React Router, siempre debe ir al final de las rutas
 app.get("{*path}", (req: Request, res: Response) => {
   res.sendFile(path.resolve(staticFilesPath, "index.html"));
 });
