@@ -17,6 +17,7 @@ export default defineConfig({
   Por eso necesita la subruta explícita:
   */
   // base: "/MasterXVIII-cloud-manual-deploy/",
+  //base: "/MasterXVIII-cloud-auto-deploy/",
 
   /*
   Opción B: DESPLIEGUE EN RENDER (O CUALQUIER SERVIDOR PROPIO / DOCKER)
@@ -25,7 +26,7 @@ export default defineConfig({
   del dominio (`https://tu-app.onrender.com/`). 
   Por eso la ruta base debe ser "/" (o simplemente omitir la propiedad `base`):
   */
-  base: "/MasterXVIII-cloud-auto-deploy/",
+  base: "/",
 
   resolve: {
     alias: {

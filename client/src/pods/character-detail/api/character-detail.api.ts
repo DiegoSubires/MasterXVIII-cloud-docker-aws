@@ -96,6 +96,7 @@ export const saveCharacter = async (
 // CON FRONTEND EN GITHUB PAGES Y SERVIDOR EN RENDER
 // ==========================================
 
+/*
 // URL base del servidor Express alojado en Render
 const RENDER_BACKEND_URL =
   "https://masterxviii-cloud-manual-deploy.onrender.com";
@@ -132,6 +133,47 @@ export const saveCharacter = async (
       sentence: character.bestSentence,
     },
   );
+
+  return true;
+};
+*/
+
+// ===================================================================
+// ENTORNO MONOLÍTICO ACTUAL (DOCKER / FULLSTACK) ---
+// Al compilarse e incluirse el front dentro del contenedor, usamos rutas relativas.
+// ===================================================================
+
+// 1. OBTENER PERSONAJE + FRASE CÉLEBRE
+export const getCharacterRest = async (
+  id: string,
+): Promise<CharacterDetailApi> => {
+  const characterResponse = await apiClient.get<CharacterDetailApi>(
+    `/character/${id}`,
+  );
+  const characterData = characterResponse.data;
+
+  try {
+    const sentenceResponse = await axios.get(`/api/character/${id}/sentence`);
+
+    characterData.bestSentence = sentenceResponse.data.sentence;
+  } catch (error) {
+    console.error(
+      "No se pudo obtener la frase célebre del servidor Express:",
+      error,
+    );
+    characterData.bestSentence = "";
+  }
+
+  return characterData;
+};
+
+// 2. GUARDAR FRASE EN EL SERVIDOR EXPRESS
+export const saveCharacter = async (
+  character: CharacterDetailApi,
+): Promise<boolean> => {
+  await axios.post(`/api/character/${character.id}/sentence`, {
+    sentence: character.bestSentence,
+  });
 
   return true;
 };

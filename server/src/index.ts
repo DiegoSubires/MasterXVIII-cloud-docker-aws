@@ -9,8 +9,13 @@ const app = express();
 // Middleware necesario al envíar datos en formato JSON desde el cliente (ej. al guardar la frase)
 app.use(express.json());
 
-// Middleware necesario al envíar datos de un dominio (Render) a otro distinto (GitHub Pages), dando permsiso explícito.
-// Habilitar todas las peticiones CORS para desarrollo y pruebas, para evitar bloqueos iniciales.
+/*
+Dejo activo app.use(cors()) para evitar problemas en desarrollo 
+local o pruebas cruzadas, en producción con Docker deja de ser estrictamente 
+necesario debido a que el Frontend y el Backend se sirven desde el mismo 
+origen, IP y puerto.
+*/
+
 app.use(cors());
 
 /* 
@@ -23,10 +28,11 @@ app.use(cors());
   Express solo respondería a las rutas de /api.
 */
 
-// Obtenemos __dirname compatible con ES Modules (type: "module")
+// 1. RESOLUCIÓN DE RUTAS PARA ARCHIVOS ESTÁTICOS (FRONTEND)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// IMPORTANTE: En la etapa 3 del Dockerfile copiamos el build del front a esta ubicación exacta
 // Apuntamos a la carpeta estática construida por Vite ( client/dist )
 const staticFilesPath = path.resolve(__dirname, "../../client/dist");
 
@@ -100,7 +106,7 @@ app.get("{*path}", (req: Request, res: Response) => {
 ===================================================================
 4. INICIALIZACIÓN DEL SERVIDOR
 ===================================================================
-- Render asigna automáticamente una variable de entorno `process.env.PORT` (ej. 10000).
+- Render y los contenedores asignan dinámicamente el puerto mediante variable de entorno `process.env.PORT` (ej. 10000).
 - En local usará el puerto por defecto (8080).
 */
 const PORT = process.env.PORT || 8080;
