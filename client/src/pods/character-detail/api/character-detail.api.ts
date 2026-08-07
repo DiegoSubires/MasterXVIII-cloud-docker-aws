@@ -2,20 +2,24 @@ import axios from "axios";
 import type { CharacterDetailApi } from "./character-detail.api-model";
 import { apiClient } from "@/core/api/axios-client";
 
-const REST_URL = "http://localhost:3000/characters";
+// ==========================================
+// CON SERVIDOR LOCAL EN DESARROLLO
+// ==========================================
 
-// ==========================================
+//const REST_URL = "http://localhost:3000/characters";
+
 // 1. MÉTODO REST (AXIOS)
-// ==========================================
+
+/*
 export const getCharacterRest = async (
   id: string,
 ): Promise<CharacterDetailApi> => {
   const { data } = await apiClient.get<CharacterDetailApi>(`/character/${id}`);
   return data;
 };
-// ==========================================
+
 // 2. GUARDADO LOCAL (PUT REST)
-// ==========================================
+
 export const saveCharacter = async (
   character: CharacterDetailApi,
 ): Promise<boolean> => {
@@ -36,6 +40,51 @@ export const saveCharacter = async (
         throw error;
       }
     });
+
+  return true;
+};*/
+
+// ==========================================
+// CON SERVIDOR EN RENDER EN PRODUCCIÓN
+// ==========================================
+
+// 1. OBTENER PERSONAJE + FRASE CÉLEBRE
+
+export const getCharacterRest = async (
+  id: string,
+): Promise<CharacterDetailApi> => {
+  // Petición 1: Trae los datos base del personaje (Rick y Morty API)
+  const characterResponse = await apiClient.get<CharacterDetailApi>(
+    `/character/${id}`,
+  );
+  const characterData = characterResponse.data;
+
+  try {
+    // Petición 2: Trae la frase guardada en nuestro Express de Render
+    const sentenceResponse = await axios.get(`/api/character/${id}/sentence`);
+
+    // Asignamos la frase al modelo que consumirá el componente
+    characterData.bestSentence = sentenceResponse.data.sentence;
+  } catch (error) {
+    console.error(
+      "No se pudo obtener la frase célebre del servidor Express:",
+      error,
+    );
+    characterData.bestSentence = "";
+  }
+
+  return characterData;
+};
+
+// 2. GUARDAR FRASE EN EL SERVIDOR EXPRESS
+
+export const saveCharacter = async (
+  character: CharacterDetailApi,
+): Promise<boolean> => {
+  // Enviamos la frase directamente a nuestro endpoint POST en Express
+  await axios.post(`/api/character/${character.id}/sentence`, {
+    sentence: character.bestSentence,
+  });
 
   return true;
 };
