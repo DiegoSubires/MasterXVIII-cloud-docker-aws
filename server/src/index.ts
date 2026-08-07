@@ -81,7 +81,7 @@ app.post("/api/character/:id/sentence", (req: Request, res: Response) => {
   res.json({ success: true, sentence });
 });
 
-// Fallback para React Router[cite: 4]
+// Fallback SPA, para React Router, al final de las rutas
 app.get("{*path}", (req: Request, res: Response) => {
   res.sendFile(path.resolve(staticFilesPath, "index.html"));
 });
