@@ -2,11 +2,16 @@ import express from "express";
 import type { Request, Response } from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import cors from "cors";
 
 const app = express();
 
 // Middleware necesario al envíar datos en formato JSON desde el cliente (ej. al guardar la frase)
 app.use(express.json());
+
+// Middleware necesario al envíar datos de un dominio (Render) a otro distinto (GitHub Pages), dando permsiso explícito.
+// Habilitar todas las peticiones CORS para desarrollo y pruebas, para evitar bloqueos iniciales.
+app.use(cors());
 
 /* 
 ===================================================================

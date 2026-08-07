@@ -6,11 +6,12 @@ import { apiClient } from "@/core/api/axios-client";
 // CON SERVIDOR LOCAL EN DESARROLLO
 // ==========================================
 
-//const REST_URL = "http://localhost:3000/characters";
+/*
+const REST_URL = "http://localhost:3000/characters";
 
 // 1. MÉTODO REST (AXIOS)
 
-/*
+
 export const getCharacterRest = async (
   id: string,
 ): Promise<CharacterDetailApi> => {
@@ -45,9 +46,10 @@ export const saveCharacter = async (
 };*/
 
 // ==========================================
-// CON SERVIDOR EN RENDER EN PRODUCCIÓN
+// CON FRONTEND Y SERVIDOR EN RENDER
 // ==========================================
 
+/*
 // 1. OBTENER PERSONAJE + FRASE CÉLEBRE
 
 export const getCharacterRest = async (
@@ -85,6 +87,51 @@ export const saveCharacter = async (
   await axios.post(`/api/character/${character.id}/sentence`, {
     sentence: character.bestSentence,
   });
+
+  return true;
+};
+*/
+
+// ==========================================
+// CON FRONTEND EN GITHUB PAGES Y SERVIDOR EN RENDER
+// ==========================================
+
+// URL base del servidor Express alojado en Render
+const RENDER_BACKEND_URL =
+  "https://masterxviii-cloud-manual-deploy.onrender.com";
+
+// 1. OBTENER PERSONAJE + FRASE CÉLEBRE
+export const getCharacterRest = async (
+  id: string,
+): Promise<CharacterDetailApi> => {
+  const characterResponse = await apiClient.get<CharacterDetailApi>(
+    `/character/${id}`,
+  );
+  const characterData = characterResponse.data;
+
+  try {
+    const sentenceResponse = await axios.get(
+      `${RENDER_BACKEND_URL}/api/character/${id}/sentence`,
+    );
+    characterData.bestSentence = sentenceResponse.data.sentence;
+  } catch (error) {
+    console.error("No se pudo obtener la frase célebre de Render:", error);
+    characterData.bestSentence = "";
+  }
+
+  return characterData;
+};
+
+// 2. GUARDAR FRASE EN EL SERVIDOR EXPRESS
+export const saveCharacter = async (
+  character: CharacterDetailApi,
+): Promise<boolean> => {
+  await axios.post(
+    `${RENDER_BACKEND_URL}/api/character/${character.id}/sentence`,
+    {
+      sentence: character.bestSentence,
+    },
+  );
 
   return true;
 };
