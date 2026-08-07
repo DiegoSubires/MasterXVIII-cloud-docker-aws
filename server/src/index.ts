@@ -63,7 +63,12 @@ app.get("/api/list", (req: Request, res: Response<ResourceItem[]>) => {
 
 // Simulación de base de datos en memoria o consulta
 let bestSentences: Record<string, string> = {
-  "2": "Aw geez, Rick!", // Frase para Morty (ID 2)
+  "1": "Wubba Lubba Dub Dub!",
+  "2": "Aw geez, Rick!",
+  "3": "I just want to die!",
+  "4": "I'm a heart surgeon, I save lives!",
+  "5": "Hungry for Apples",
+  "6": "Bow down before me, mortals!",
 };
 
 // Endpoint para obtener la frase célebre
