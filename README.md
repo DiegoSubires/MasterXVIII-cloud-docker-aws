@@ -93,3 +93,26 @@ El frontend de la aplicación se ha migrado para ser servido de forma estática 
 
 - **Desafío**: Al tener el proyecto una estructura dividida en subcarpetas, el runner de GitHub Actions no encontraba los archivos en la raíz.
 - **Solución**: Se ha configurado el workflow utilizando las directivas `working-directory: ./client` y `cache-dependency-path` para guiar al proceso de instalación y compilación dentro de la subcarpeta del frontend.
+
+# 🐳 Seccion 2: Despliegue Automatizado con Docker y Render
+
+Este documento resume los problemas técnicos encontrados durante el proceso de empaquetado multi-stage con Docker y el posterior despliegue automatizado en la plataforma Cloud **Render**, así como las soluciones aplicadas para garantizar la estabilidad de la aplicación _Fullstack_ (React + Node.js/Express).
+
+---
+
+## 🔍 Incidencias Encontradas y Soluciones
+
+### 1. Error de Tipo MIME al cargar estáticos (`text/html` instead of `executable script`)
+
+- **Sintoma:** Al intentar cargar la app en el navegador, la pantalla se quedaba en blanco y la consola lanzaba un error indicando que los scripts `.js` se servían con tipo MIME `text/html`.
+- **Causa Raíz:** En el archivo `client/vite.config.ts`, la propiedad `base` estaba configurada apuntando a una subruta de GitHub Pages (`base: "/MasterXVIII-cloud-auto-deploy/"`). Al compilar en Docker, el `index.html` solicitaba los scripts bajo esa subruta. Express no encontraba los archivos en esa localización y saltaba el _fallback handler_ de la SPA, devolviendo el `index.html` en respuesta a la petición del `.js`.
+- **Solución:**
+  1. Se modificó `client/vite.config.ts` para fijar la ruta base en la raíz:
+     ```typescript
+     base: "/";
+     ```
+  2. En el servidor Express (`server/src/index.ts`), se aseguró la ruta estática mediante la resolución del directorio del contenedor:
+     ```typescript
+     const staticFilesPath = path.resolve(__dirname, "../../client/dist");
+     app.use(express.static(staticFilesPath));
+     ```
