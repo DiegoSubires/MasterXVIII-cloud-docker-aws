@@ -12,3 +12,7 @@ server/dist/
 *.log
 .DS_Store
 .env
+
+
+
+README.md

@@ -25,7 +25,7 @@ export default defineConfig({
   del dominio (`https://tu-app.onrender.com/`). 
   Por eso la ruta base debe ser "/" (o simplemente omitir la propiedad `base`):
   */
-  base: "/",
+  base: "/MasterXVIII-cloud-auto-deploy/",
 
   resolve: {
     alias: {
