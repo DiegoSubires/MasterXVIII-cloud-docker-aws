@@ -116,3 +116,67 @@ Este documento resume los problemas técnicos encontrados durante el proceso de 
      const staticFilesPath = path.resolve(__dirname, "../../client/dist");
      app.use(express.static(staticFilesPath));
      ```
+
+# Rick and Morty Web App — Multi-Cloud Deployment (AWS & Azure) via CI/CD
+
+Aplicación web desarrollada para la visualización de datos de la API de Rick and Morty. El proyecto está completamente contenedorizado mediante Docker y cuenta con flujos automatizados de Integración y Despliegue Continuo (CI/CD) a través de GitHub Actions para dos proveedores cloud distintos: Amazon Web Services (AWS) y Microsoft Azure.
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Frontend:** React / Vite / TypeScript
+- **Contenedorización:** Docker & Docker Hub
+- **Cloud Provider 1:** AWS EC2 (Amazon Linux 2023)
+- **Cloud Provider 2:** Azure App Services / Container Apps
+- **Automatización CI/CD:** GitHub Actions
+
+---
+
+## 🚀 Arquitecturas de Despliegue Automatizado (CI/CD)
+
+El repositorio cuenta con workflows específicos dentro de la carpeta `.github/workflows/` encargados de compilar de forma aislada y publicar los cambios automáticamente.
+
+### 🔹 Escenario A: Despliegue en AWS EC2 (`deploy-aws.yml`)
+
+Ante cualquier actualización en la rama principal (`main`), el pipeline realiza los siguientes pasos:
+
+1. **Build & Push:** Compila la imagen de Docker local y la sube al registro público de Docker Hub como `diegosubires/practica-cloud-app:latest`.
+2. **SSH Deployment:** Establece una conexión segura por SSH utilizando una clave RSA autorizada en la instancia EC2, detiene el contenedor en ejecución previa, descarga la nueva versión (_pull_) y levanta el servicio mapeando el puerto público `80:8080`.
+
+### 🔹 Escenario B: Despliegue en Microsoft Azure (`deploy-azure.yml`)
+
+Para el entorno en Azure, el flujo se integra de manera nativa utilizando los mecanismos del proveedor:
+
+1. **Docker Auth & Push:** Sincroniza la build automatizada contra el contenedor en la nube.
+2. **Azure WebApp Login:** Utiliza un perfil de publicación cifrado (_Publish Profile_) o credenciales de Service Principal para refrescar el Service Plan y desplegar de forma progresiva la imagen de Docker actualizada sin caídas de servicio.
+
+---
+
+## 💻 Instrucciones de Ejecución y Despliegue Manual
+
+### Ejecución Local con Docker
+
+Si se desea levantar el contenedor de forma local para pruebas de desarrollo:
+
+```bash
+docker build -t practica-cloud-app .
+docker run --name mi-app-container -p 8080:8080 practica-cloud-app
+```
+
+Despliegue Manual en Servidor Linux (AWS EC2)
+
+```bash
+# 1. Actualizar el gestor de paquetes e instalar Docker
+sudo yum update -y
+sudo yum install docker -y
+sudo service docker start
+
+# 2. Descargar y desplegar la imagen desde el registro público
+sudo docker run --name my-app-container --rm -d -p 80:8080 diegosubires/practica-cloud-app:latest
+```
+
+🌐 Enlaces de Acceso al Proyecto
+Dirección IP Pública (AWS EC2): http://13.51.194.1
+
+Registro de la Imagen (Docker Hub): diegosubires/practica-cloud-app:latest
